@@ -4,7 +4,10 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.fincore.entities.enums.UserRole;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,13 +25,13 @@ public class User implements UserDetails{
     private Long id;
     private String username;
     private String password;
-    private String role;
+    private UserRole role;
 
     public User(){
         
     }
     
-    public User(Long id, String username, String password, String role) {
+    public User(Long id, String username, String password, UserRole role) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -41,7 +44,12 @@ public class User implements UserDetails{
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        if(this.role == UserRole.ADMIN){
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        }else{
+            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        }
+        
     }
 
     @Override
@@ -62,11 +70,11 @@ public class User implements UserDetails{
         this.password = password;
     }
 
-    public String getRole() {
+    public UserRole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(UserRole role) {
         this.role = role;
     }
 

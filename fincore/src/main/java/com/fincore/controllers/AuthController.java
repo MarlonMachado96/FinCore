@@ -18,6 +18,7 @@ import com.fincore.dtos.LoginResponse;
 import com.fincore.dtos.RegisterRequest;
 import com.fincore.dtos.RegisterResponse;
 import com.fincore.entities.User;
+import com.fincore.entities.enums.UserRole;
 import com.fincore.repositories.UserRepository;
 
 import jakarta.validation.Valid;
@@ -32,7 +33,7 @@ public class AuthController {
     private final TokenConfig tokenConfig;
 
     public AuthController(UserRepository userRepository, AuthenticationManager authenticationManager,
-            PasswordEncoder passwordEncoder, TokenConfig tokenConfig) {
+        PasswordEncoder passwordEncoder, TokenConfig tokenConfig) {
         this.userRepository = userRepository;
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
@@ -51,7 +52,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest request){
         String encodedPassword = passwordEncoder.encode(request.password());
-        User newUser = new User(null, request.username(), encodedPassword, "user");
+        User newUser = new User(null, request.username(), encodedPassword, request.role());
         userRepository.save(newUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(new RegisterResponse(newUser.getUsername()));
 
