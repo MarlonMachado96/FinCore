@@ -1,8 +1,6 @@
 package com.fincore.services;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,12 +19,13 @@ public class UserService {
     }
 
     public User findById(Long id){
-        try{
-            Optional<User> user = repository.findById(id);
-            return user.get();
-        }catch(IOException e){
-            throw new IOException(e.getMessage());
-        }
+        return repository.findById(id)
+        .orElseThrow(() ->
+            new RuntimeException("Usuário não encontrado"));
         
+    }
+
+    public User insertUser(User newUser){
+        return repository.save(newUser);
     }
 }
