@@ -1,4 +1,4 @@
-package com.fincore.controllers;
+package com.fincore.controller;
 
 
 import org.springframework.http.HttpStatus;
@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fincore.config.TokenConfig;
-import com.fincore.dtos.LoginRequest;
-import com.fincore.dtos.LoginResponse;
-import com.fincore.dtos.RegisterRequest;
-import com.fincore.dtos.RegisterResponse;
-import com.fincore.entities.User;
-import com.fincore.entities.enums.UserRole;
-import com.fincore.repositories.UserRepository;
+import com.fincore.dto.LoginRequest;
+import com.fincore.dto.LoginResponse;
+import com.fincore.dto.RegisterRequest;
+import com.fincore.dto.RegisterResponse;
+import com.fincore.entitie.User;
+import com.fincore.entitie.enums.UserRole;
+import com.fincore.repository.UserRepository;
 
 import jakarta.validation.Valid;
 
@@ -52,7 +52,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest request){
         String encodedPassword = passwordEncoder.encode(request.password());
-        User newUser = new User(null, request.username(), encodedPassword, request.role());
+        User newUser = new User(null, request.username(), request.username(), encodedPassword, request.role());
         userRepository.save(newUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(new RegisterResponse(newUser.getUsername()));
 

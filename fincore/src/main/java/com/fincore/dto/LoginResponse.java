@@ -1,4 +1,4 @@
-package com.fincore.dtos;
+package com.fincore.dto;
 
 public record LoginResponse(String token) {
     

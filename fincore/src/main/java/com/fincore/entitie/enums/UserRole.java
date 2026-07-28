@@ -1,4 +1,4 @@
-package com.fincore.entities.enums;
+package com.fincore.entitie.enums;
 
 public enum UserRole {
     ADMIN("admin"),

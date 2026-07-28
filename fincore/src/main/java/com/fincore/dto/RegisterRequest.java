@@ -1,6 +1,6 @@
-package com.fincore.dtos;
+package com.fincore.dto;
 
-import com.fincore.entities.enums.UserRole;
+import com.fincore.entitie.enums.UserRole;
 
 import jakarta.validation.constraints.NotBlank;
 
