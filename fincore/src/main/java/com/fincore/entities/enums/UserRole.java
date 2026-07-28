@@ -3,6 +3,7 @@ package com.fincore.entities.enums;
 public enum UserRole {
     ADMIN("admin"),
     CONTADOR("contado"),
+    EMPRESARIO("Empresário"),
     USER("user");
 
     private String role;
