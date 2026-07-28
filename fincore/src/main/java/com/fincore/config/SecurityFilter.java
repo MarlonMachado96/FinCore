@@ -9,6 +9,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.fincore.entities.User;
+import com.fincore.repositories.UserRepository;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,9 +21,11 @@ import jakarta.servlet.http.HttpServletResponse;
 public class SecurityFilter extends OncePerRequestFilter{
 
     private TokenConfig tokenConfig;
+    private final UserRepository userRepository;
 
-    public SecurityFilter(TokenConfig tokenConfig) {
+    public SecurityFilter(TokenConfig tokenConfig, UserRepository userRepository) {
         this.tokenConfig = tokenConfig;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -32,8 +37,17 @@ public class SecurityFilter extends OncePerRequestFilter{
             Optional<JWTUserData> optUser = tokenConfig.validateToken(token);
             if (optUser.isPresent()){
                 JWTUserData userData = optUser.get();
-                
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userData, null, user.getAuthorities());
+
+                User user = userRepository
+                        .findByUsername(userData.username())
+                        .orElseThrow();
+
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                user,
+                                null,
+                                user.getAuthorities());
+
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
             filterChain.doFilter(request, response);
