@@ -1,0 +1,45 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: fincore-mysql
+    environment:
+      MYSQL_DATABASE: db_fincore
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test@123
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    volumes:
+      - fincore-mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - fincore-network
+
+  fincore-app:
+    build: .
+    container_name: fincore-app
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/db_fincore?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: test
+      SPRING_DATASOURCE_PASSWORD: test@123
+      SERVER_PORT: 8081
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - fincore-network
+
+volumes:
+  fincore-mysql-data:
+
+networks:
+  fincore-network:
+    driver: bridge
